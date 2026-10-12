@@ -1,0 +1,718 @@
+{
+    "name": "Meeting Workflow | Google Drive to AssemblyAI Transcription",
+    "flow": [
+        {
+            "id": 1,
+            "module": "google-drive:watchFilesInAFolder",
+            "version": 4,
+            "parameters": {
+                "limit": 1,
+                "select": "create",
+                "folderId": "/YOUR_DRIVE_FOLDER_ID",
+                "mimeType": "all",
+                "__IMTCONN__": "YOUR_CONNECTION_ID",
+                "destination": "drive"
+            },
+            "mapper": {},
+            "metadata": {
+                "designer": {
+                    "x": 0,
+                    "y": 0
+                },
+                "restore": {
+                    "parameters": {
+                        "select": {
+                            "label": "By Created Time"
+                        },
+                        "folderId": {
+                            "path": [
+                                "YOUR_DRIVE_FOLDER_ID"
+                            ]
+                        },
+                        "mimeType": {
+                            "label": "All"
+                        },
+                        "__IMTCONN__": {
+                            "data": {
+                                "scoped": "true",
+                                "connection": "google-restricted"
+                            },
+                            "label": "Google Drive Connection (you@example.com)"
+                        },
+                        "destination": {
+                            "label": "My Drive"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "__IMTCONN__",
+                        "type": "account:google-restricted,google-drive",
+                        "label": "Connection",
+                        "required": true
+                    },
+                    {
+                        "name": "select",
+                        "type": "select",
+                        "label": "Watch Files",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "create",
+                                "modify"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "destination",
+                        "type": "select",
+                        "label": "Choose a Drive",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "drive",
+                                "share",
+                                "team"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "mimeType",
+                        "type": "select",
+                        "label": "File Types to Watch",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "all",
+                                "document",
+                                "spreadsheet",
+                                "slide",
+                                "drawing"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "type": "uinteger",
+                        "label": "Limit",
+                        "required": true
+                    },
+                    {
+                        "name": "folderId",
+                        "type": "folder",
+                        "label": "Select the Folder to be Watched",
+                        "required": true
+                    }
+                ]
+            }
+        },
+        {
+            "id": 14,
+            "module": "google-drive:getAFile",
+            "version": 4,
+            "parameters": {
+                "__IMTCONN__": "YOUR_CONNECTION_ID"
+            },
+            "mapper": {
+                "file": "{{1.id}}",
+                "select": "map",
+                "formatDrawings": "image/jpeg",
+                "formatDocuments": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                "formatSpreadsheets": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                "formatPresentations": "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+            },
+            "metadata": {
+                "designer": {
+                    "x": 311,
+                    "y": 335
+                },
+                "setupValidation": {
+                    "result": {
+                        "valid": true,
+                        "fields": []
+                    },
+                    "version": 1,
+                    "configuration": "7708b24bcd69c680"
+                },
+                "restore": {
+                    "expect": {
+                        "select": {
+                            "label": "Enter manually"
+                        },
+                        "formatDrawings": {
+                            "label": "JPEG"
+                        },
+                        "formatDocuments": {
+                            "label": "MS Word Document"
+                        },
+                        "formatSpreadsheets": {
+                            "label": "MS Excel"
+                        },
+                        "formatPresentations": {
+                            "label": "MS PowerPoint"
+                        }
+                    },
+                    "parameters": {
+                        "__IMTCONN__": {
+                            "data": {
+                                "scoped": "true",
+                                "connection": "google-restricted"
+                            },
+                            "label": "Google Drive Connection (you@example.com)"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "__IMTCONN__",
+                        "type": "account:google-restricted,google-drive",
+                        "label": "Connection",
+                        "required": true
+                    }
+                ],
+                "expect": [
+                    {
+                        "name": "select",
+                        "type": "select",
+                        "label": "Enter a File ID",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "map",
+                                "value"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "formatDocuments",
+                        "type": "select",
+                        "label": "Convert Google Documents Files to Format",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                                "application/pdf",
+                                "application/vnd.oasis.opendocument.text",
+                                "text/html",
+                                "text/plain",
+                                "application/rtf",
+                                "text/markdown"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "formatSpreadsheets",
+                        "type": "select",
+                        "label": "Convert Google Spreadsheets Files to Format",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                                "application/x-vnd.oasis.opendocument.spreadsheet",
+                                "application/pdf",
+                                "text/csv"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "formatPresentations",
+                        "type": "select",
+                        "label": "Convert Google Slides Files to Format",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+                                "application/pdf"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "formatDrawings",
+                        "type": "select",
+                        "label": "Convert Google Drawings Files to Format",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "image/jpeg",
+                                "image/png",
+                                "image/svg+xml",
+                                "application/pdf"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "file",
+                        "type": "text",
+                        "label": "File ID",
+                        "required": true
+                    }
+                ]
+            }
+        },
+        {
+            "id": 15,
+            "module": "http:MakeRequest",
+            "version": 4,
+            "parameters": {
+                "tlsType": "",
+                "authenticationType": "noAuth"
+            },
+            "mapper": {
+                "url": "https://api.assemblyai.com/v2/upload",
+                "method": "post",
+                "headers": [
+                    {
+                        "name": "authorization",
+                        "value": "YOUR_ASSEMBLYAI_API_KEY"
+                    }
+                ],
+                "timeout": "40",
+                "contentType": "custom",
+                "shareCookies": false,
+                "parseResponse": true,
+                "allowRedirects": true,
+                "rawBodyContent": "{{14.data}}",
+                "stopOnHttpError": true,
+                "contentTypeValue": "application/octet-stream",
+                "requestCompressedContent": true
+            },
+            "metadata": {
+                "designer": {
+                    "x": 697,
+                    "y": 148
+                },
+                "restore": {
+                    "expect": {
+                        "method": {
+                            "mode": "chose",
+                            "label": "POST"
+                        },
+                        "headers": {
+                            "mode": "chose",
+                            "items": [
+                                null
+                            ]
+                        },
+                        "contentType": {
+                            "label": "CustomEnter data using a custom content type, such as text/plain."
+                        },
+                        "shareCookies": {
+                            "mode": "chose"
+                        },
+                        "parseResponse": {
+                            "mode": "chose"
+                        },
+                        "allowRedirects": {
+                            "mode": "chose"
+                        },
+                        "paginationType": {
+                            "label": "Empty"
+                        },
+                        "queryParameters": {
+                            "mode": "chose"
+                        },
+                        "stopOnHttpError": {
+                            "mode": "chose"
+                        },
+                        "requestCompressedContent": {
+                            "mode": "chose"
+                        }
+                    },
+                    "parameters": {
+                        "tlsType": {
+                            "label": "Empty"
+                        },
+                        "authenticationType": {
+                            "label": "No authenticationUse when no credentials are required for the request."
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "authenticationType",
+                        "type": "select",
+                        "label": "Authentication type",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "noAuth",
+                                "apiKey",
+                                "basicAuth",
+                                "oAuth"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "tlsType",
+                        "type": "select",
+                        "label": "Transport layer security (TLS)",
+                        "validate": {
+                            "enum": [
+                                "mTls",
+                                "tls"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "proxyKeychain",
+                        "type": "keychain:proxy",
+                        "label": "Proxy"
+                    }
+                ],
+                "expect": [
+                    {
+                        "name": "url",
+                        "type": "url",
+                        "label": "URL",
+                        "required": true
+                    },
+                    {
+                        "name": "method",
+                        "type": "select",
+                        "label": "Method",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "get",
+                                "head",
+                                "post",
+                                "put",
+                                "patch",
+                                "delete",
+                                "options"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "headers",
+                        "spec": {
+                            "name": "value",
+                            "spec": [
+                                {
+                                    "name": "name",
+                                    "type": "text",
+                                    "label": "Name",
+                                    "required": true,
+                                    "validate": {
+                                        "pattern": "^[-!#$%&'*+.^_`|~0-9A-Za-z]+$"
+                                    }
+                                },
+                                {
+                                    "name": "value",
+                                    "type": "text",
+                                    "label": "Value"
+                                }
+                            ],
+                            "type": "collection",
+                            "label": "Header"
+                        },
+                        "type": "array",
+                        "label": "Headers"
+                    },
+                    {
+                        "name": "queryParameters",
+                        "spec": {
+                            "name": "value",
+                            "spec": [
+                                {
+                                    "name": "name",
+                                    "type": "text",
+                                    "label": "Name",
+                                    "required": true
+                                },
+                                {
+                                    "name": "value",
+                                    "type": "text",
+                                    "label": "Value"
+                                }
+                            ],
+                            "type": "collection",
+                            "label": "Parameter"
+                        },
+                        "type": "array",
+                        "label": "Query parameters"
+                    },
+                    {
+                        "name": "contentType",
+                        "type": "select",
+                        "label": "Body content type",
+                        "validate": {
+                            "enum": [
+                                "json",
+                                "multipart",
+                                "urlEncoded",
+                                "custom"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "parseResponse",
+                        "type": "boolean",
+                        "label": "Parse response",
+                        "required": true
+                    },
+                    {
+                        "name": "stopOnHttpError",
+                        "type": "boolean",
+                        "label": "Return error if HTTP request fails",
+                        "required": true
+                    },
+                    {
+                        "name": "timeout",
+                        "type": "uinteger",
+                        "label": "Timeout",
+                        "validate": {
+                            "max": 300,
+                            "min": 1
+                        }
+                    },
+                    {
+                        "name": "allowRedirects",
+                        "type": "boolean",
+                        "label": "Allow redirects",
+                        "required": true
+                    },
+                    {
+                        "name": "shareCookies",
+                        "type": "boolean",
+                        "label": "Share cookies with other HTTP modules",
+                        "required": true
+                    },
+                    {
+                        "name": "requestCompressedContent",
+                        "type": "boolean",
+                        "label": "Request compressed content",
+                        "required": true
+                    },
+                    {
+                        "name": "contentTypeValue",
+                        "type": "text",
+                        "label": "Content type value",
+                        "required": true
+                    },
+                    {
+                        "name": "rawBodyContent",
+                        "type": "buffer",
+                        "label": "Body content",
+                        "required": true
+                    },
+                    {
+                        "name": "paginationType",
+                        "type": "select",
+                        "label": "Pagination type",
+                        "validate": {
+                            "enum": [
+                                "offsetBased",
+                                "pageBased",
+                                "urlBased",
+                                "tokenBased"
+                            ]
+                        }
+                    }
+                ],
+                "interface": [
+                    {
+                        "name": "data",
+                        "type": "any",
+                        "label": "Data"
+                    },
+                    {
+                        "name": "statusCode",
+                        "type": "number",
+                        "label": "Status Code"
+                    },
+                    {
+                        "name": "headers",
+                        "spec": [
+                            {
+                                "name": "content-length",
+                                "type": "text",
+                                "label": "Content-Length"
+                            },
+                            {
+                                "name": "content-encoding",
+                                "type": "text",
+                                "label": "Content-Encoding"
+                            },
+                            {
+                                "name": "content-type",
+                                "type": "text",
+                                "label": "Content-Type"
+                            },
+                            {
+                                "name": "server",
+                                "type": "text",
+                                "label": "Server"
+                            },
+                            {
+                                "name": "cache-control",
+                                "type": "text",
+                                "label": "Cache-Control"
+                            },
+                            {
+                                "name": "set-cookie",
+                                "spec": {
+                                    "type": "text"
+                                },
+                                "type": "array",
+                                "label": "Set-Cookie"
+                            }
+                        ],
+                        "type": "collection",
+                        "label": "Headers"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 11,
+            "module": "assembly-ai:Universal",
+            "version": 1,
+            "parameters": {
+                "__IMTCONN__": "YOUR_CONNECTION_ID"
+            },
+            "mapper": {
+                "url": "/v2/transcript",
+                "body": "{\n  \"audio_url\": \"{{15.data.upload_url}}\",\n  \"speech_models\": [\"universal-3-pro\"],\n  \"speaker_labels\": true,\n  \"speakers_expected\": 10,\n  \"webhook_url\": \"YOUR_MAKE_WEBHOOK_URL\"\n}",
+                "method": "POST",
+                "headers": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ]
+            },
+            "metadata": {
+                "designer": {
+                    "x": 1844,
+                    "y": 70
+                },
+                "setupValidation": {
+                    "result": {
+                        "valid": true,
+                        "fields": []
+                    },
+                    "version": 1,
+                    "configuration": "20fcc0b5464bb101"
+                },
+                "restore": {
+                    "expect": {
+                        "qs": {
+                            "mode": "chose"
+                        },
+                        "method": {
+                            "mode": "chose",
+                            "label": "POST"
+                        },
+                        "headers": {
+                            "mode": "chose",
+                            "items": [
+                                null
+                            ]
+                        }
+                    },
+                    "parameters": {
+                        "__IMTCONN__": {
+                            "data": {
+                                "scoped": "true",
+                                "connection": "assembly-ai"
+                            },
+                            "label": "AssemblyAI Connection"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "__IMTCONN__",
+                        "type": "account:assembly-ai",
+                        "label": "Connection",
+                        "required": true
+                    }
+                ],
+                "expect": [
+                    {
+                        "name": "url",
+                        "type": "text",
+                        "label": "URL",
+                        "required": true
+                    },
+                    {
+                        "name": "method",
+                        "type": "select",
+                        "label": "Method",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "GET",
+                                "POST",
+                                "PUT",
+                                "PATCH",
+                                "DELETE"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "headers",
+                        "spec": [
+                            {
+                                "name": "key",
+                                "type": "text",
+                                "label": "Key"
+                            },
+                            {
+                                "name": "value",
+                                "type": "text",
+                                "label": "Value"
+                            }
+                        ],
+                        "type": "array",
+                        "label": "Headers"
+                    },
+                    {
+                        "name": "qs",
+                        "spec": [
+                            {
+                                "name": "key",
+                                "type": "text",
+                                "label": "Key"
+                            },
+                            {
+                                "name": "value",
+                                "type": "text",
+                                "label": "Value"
+                            }
+                        ],
+                        "type": "array",
+                        "label": "Query String"
+                    },
+                    {
+                        "name": "body",
+                        "type": "any",
+                        "label": "Body"
+                    }
+                ]
+            }
+        }
+    ],
+    "metadata": {
+        "instant": false,
+        "version": 1,
+        "scenario": {
+            "roundtrips": 1,
+            "maxErrors": 3,
+            "autoCommit": true,
+            "autoCommitTriggerLast": true,
+            "sequential": false,
+            "slots": null,
+            "confidential": false,
+            "dataloss": false,
+            "dlq": false,
+            "freshVariables": false
+        },
+        "designer": {
+            "orphans": []
+        },
+        "zone": "us2.make.com",
+        "notes": []
+    }
+}
